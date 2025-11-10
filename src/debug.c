@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+
 #include "debug.h"
 #include "value.h"
 
@@ -22,13 +24,26 @@ static int constantInstruction(const char* name, Chunk* chunk, int offset) {
     return offset + 2;
 }
 
+static int getLine(int* lines, int offset) {
+    int i = 1;
+    int count = 0;
+    while (count <= offset + 1) {
+        count += lines[i];
+        if (count > offset) {
+            return lines[i - 1];
+        }
+        i += 2;
+    }
+    exit(1);
+}
+
 int disassembleInstruction(Chunk* chunk, int offset) {
     printf("%04d ", offset);
-    if (offset > 0 && chunk->lines[offset] == chunk->lines[offset - 1]) {
+    if (offset > 0 && getLine(chunk->lines, offset) == getLine(chunk->lines, offset - 1)) {
         printf("   | ");
     }
     else {
-        printf("%4d ", chunk->lines[offset]);
+        printf("%4d ", getLine(chunk->lines, offset));
     }
     uint8_t instruction = chunk->code[offset];
     switch (instruction) {

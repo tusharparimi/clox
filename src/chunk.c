@@ -40,6 +40,23 @@ void writeChunk(Chunk* chunk, uint8_t byte, int line) {
     writeLine(chunk->lines, line, &chunk->countOfLines);
 }
 
+void writeConstant(Chunk* chunk, Value value, int line) {
+    uint32_t constant_idx = addConstant(chunk, value);
+    if (constant_idx < 256) {
+        writeChunk(chunk, OP_CONSTANT, line);
+        writeChunk(chunk, constant_idx, line);
+    }
+    else {
+        writeChunk(chunk, OP_CONSTANT_LONG, line);
+        uint8_t b0 = (constant_idx >> 16) & 0xFF;
+        uint8_t b1 = (constant_idx >> 8) & 0xFF;
+        uint8_t b2 = constant_idx & 0xFF;
+        writeChunk(chunk, b0, line);
+        writeChunk(chunk, b1, line);
+        writeChunk(chunk, b2, line);
+    } 
+}
+
 int addConstant(Chunk* chunk, Value value) {
     writeValueArray(&chunk->constants, value);
     return chunk->constants.count - 1;

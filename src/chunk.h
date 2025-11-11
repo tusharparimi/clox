@@ -5,7 +5,8 @@
 #include "value.h"
 
 typedef enum {
-    OP_CONSTANT,
+    OP_CONSTANT, // 1 byte operand, only able to store 256 different constants
+    OP_CONSTANT_LONG, // 3 byte operand
     OP_RETURN,
 } OpCode;
 
@@ -21,6 +22,7 @@ typedef struct {
 
 void initChunk(Chunk* chunk);
 void writeChunk(Chunk* chunk, uint8_t byte, int line);
+void writeConstant(Chunk* chunk, Value value, int line);
 int addConstant(Chunk* chunk, Value value);
 void freeChunk(Chunk* chunk);
 

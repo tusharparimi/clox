@@ -1,4 +1,6 @@
 #include <stdlib.h>
+#include <stdio.h>
+
 #include "memory.h"
 
 void* reallocate(void* pointer, size_t oldSize, size_t newSize) {
@@ -7,6 +9,11 @@ void* reallocate(void* pointer, size_t oldSize, size_t newSize) {
         return NULL;
     }
     void* result = realloc(pointer, newSize);
-    if (result == NULL) exit(1);
+    if (result == NULL) {
+        // printf("oldsize requested: %ld\n", oldSize);
+        // printf("newsize requested: %ld\n", newSize);
+        // printf("No more MEM available!\n");
+        exit(1);
+    }
     return result;
 }

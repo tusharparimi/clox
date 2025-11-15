@@ -23,9 +23,9 @@ int main(int argc, const char* argv[]) {
     // writeChunk(&chunk, OP_ADD, 123);
     
     writeConstant(&chunk, 10, 123);
-    for (int i = 0; i < 10000000; i++) {
-        writeConstant(&chunk, 10, 123);
-        writeChunk(&chunk, OP_ADD, 123);
+    for (int i = 0; i < 260; i++) {
+        writeConstant(&chunk, i, 123);
+        // writeChunk(&chunk, OP_ADD, 123);
         // printf("count: %d\n", chunk.count);
         // printf("count of lines: %d\n", chunk.countOfLines);
         // printf("capacity: %d\n", chunk.capacity);

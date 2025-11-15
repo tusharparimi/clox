@@ -3,6 +3,8 @@
 #include "chunk.h"
 #include "memory.h"
 
+// #define BYTECODE_BASE_CAPACITY 8
+
 void initChunk(Chunk* chunk) {
     chunk->count = 0;
     chunk->capacity = 0;
@@ -27,11 +29,13 @@ void writeLine(int* lines, int line, int* count) {
 void writeChunk(Chunk* chunk, uint8_t byte, int line) {
     if (chunk->capacity < chunk->count + 1) {
         int oldCapacity = chunk->capacity;
+        // chunk->capacity = GROW_CAPACITY(oldCapacity, BYTECODE_BASE_CAPACITY);
         chunk->capacity = GROW_CAPACITY(oldCapacity);
         chunk->code = GROW_ARRAY(uint8_t, chunk->code, oldCapacity, chunk->capacity);
     }
     if (chunk->capacityOfLines < chunk->countOfLines + 1) {
         int oldCapacity = chunk->capacityOfLines;
+        // chunk->capacityOfLines = GROW_CAPACITY(oldCapacity, BYTECODE_BASE_CAPACITY);
         chunk->capacityOfLines = GROW_CAPACITY(oldCapacity);
         chunk->lines = GROW_ARRAY(int, chunk->lines, oldCapacity, chunk->capacityOfLines);
     }

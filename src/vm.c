@@ -5,25 +5,33 @@
 #include "debug.h"
 
 // comment below line to show debug trace
-#undef DEBUG_TRACE_EXECUTION
+// #undef DEBUG_TRACE_EXECUTION
+
+#define STACK_BASE_CAPACITY 256
 
 VM vm;
 
 static void resetStack() {
-    vm.stackTop = vm.stack;
+    vm.stackTop = vm.stack.values;
+    // printf("stackTop reset: %p\n", (void*)vm.stackTop);
 }
 
 void initVM() {
+    initBaseSizeValueArray(&vm.stack, STACK_BASE_CAPACITY);
     resetStack();
 }
 
 void freeVM() {
-
+    freeValueArray(&vm.stack);
 }
 
 void push(Value value) {
     // printf("\npush\n");
-    *vm.stackTop = value;
+    Value* prev_stack_ptr = vm.stack.values;
+    writeValueArray(&vm.stack, value);
+    // printf("stack count, capacity, stack_ptr: %d, %d, %p\n", vm.stack.count, vm.stack.capacity, (void*)vm.stack.values);
+    if (prev_stack_ptr != vm.stack.values) vm.stackTop = vm.stack.values + vm.stack.count - 1; // point stackTop to correct address after stack realloc
+    // *vm.stackTop = value;
     vm.stackTop++;
 }
 
@@ -56,7 +64,7 @@ static InterpretResult run() {
     for (;;) {
 #ifdef DEBUG_TRACE_EXECUTION
         printf("          ");
-        for (Value* slot = vm.stack; slot < vm.stackTop; slot++) {
+        for (Value* slot = vm.stack.values; slot < vm.stackTop; slot++) {
             printf("[ ");
             printValue(*slot);
             printf(" ]");

@@ -12,6 +12,7 @@ typedef struct {
 } ValueArray;
 
 void initValueArray(ValueArray* array);
+void initBaseSizeValueArray(ValueArray* array, int baseSize);
 void writeValueArray(ValueArray* array, Value value);
 void freeValueArray(ValueArray* array);
 void printValue(Value value);

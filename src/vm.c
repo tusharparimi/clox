@@ -32,7 +32,7 @@ void push(Value value) {
     writeValueArray(&vm.stack, value);
     // printf("stack count, capacity, stack_ptr: %d, %d, %p\n", vm.stack.count, vm.stack.capacity, (void*)vm.stack.values);
     if (prev_stack_ptr != vm.stack.values) vm.stackTop = vm.stack.values + vm.stack.count - 1; // point stackTop to correct address after stack realloc
-    // *vm.stackTop = value;
+    *vm.stackTop = value;
     vm.stackTop++;
 }
 

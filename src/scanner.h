@@ -7,6 +7,7 @@ typedef enum {
     TOKEN_LEFT_BRACE, TOKEN_RIGHT_BRACE,
     TOKEN_COMMA, TOKEN_DOT, TOKEN_MINUS, TOKEN_PLUS,
     TOKEN_SEMICOLON, TOKEN_SLASH, TOKEN_STAR,
+    TOKEN_QUESTION_MARK, TOKEN_COLON,
     // One or two character tokens.
     TOKEN_BANG, TOKEN_BANG_EQUAL,
     TOKEN_EQUAL, TOKEN_EQUAL_EQUAL,
@@ -30,7 +31,7 @@ typedef struct {
     int line;
 } Token;
 
-
+const char* enumToString(TokenType type);
 void initScanner(const char* source);
 Token scanToken();
 

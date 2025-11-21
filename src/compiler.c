@@ -104,14 +104,13 @@ static void emitReturn() {
     emitByte(OP_RETURN);
 }
 
-static uint8_t makeConstant(Value value) {
+static uint32_t makeConstant(Value value) {
     int constant_idx = addConstant(currentChunk(), value);
-    // TODO: we do have OP_CONSTANT_LONG that has 3 operands for constant idx. Need to support that too.
-    if (constant_idx > UINT8_MAX) {
+    if (constant_idx > UINT32_MAX) {
         error("Too many constants in one chunk.");
         return 0;
     }
-    return (uint8_t)constant_idx;
+    return (uint32_t)constant_idx;
 }
 
 static void endCompiler() {
@@ -156,6 +155,15 @@ static void grouping() {
 }
 
 static void emitConstant(Value value) {
+    uint32_t constant_idx = makeConstant(value);
+    if (constant_idx > UINT8_MAX) {
+        uint8_t b0 = (constant_idx >> 16) & 0xFF;
+        uint8_t b1 = (constant_idx >> 8) & 0xFF;
+        uint8_t b2 = constant_idx & 0xFF;
+        emitBytes(OP_CONSTANT_LONG, b0);
+        emitBytes(b1, b2);
+        return;
+    }
     emitBytes(OP_CONSTANT, makeConstant(value));
 }
 

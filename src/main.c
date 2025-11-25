@@ -16,6 +16,12 @@ static void repl() {
             printf("\n");
             break;
         }
+        // printf("line: %s", line);
+        // TODO: hacky but seems to work! Do something better.
+        if (strcmp(line, "exit\n") == 0) {
+            break;
+        }
+        // --------------------------------------------------
         interpret(line);
     }
 }
@@ -70,6 +76,7 @@ int main(int argc, const char* argv[]) {
         exit(64);
     }
 
+    // printf("Line before freeVM()\n");
     freeVM();
     return 0;
 }

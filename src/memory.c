@@ -23,16 +23,18 @@ static void freeObject(Obj* object) {
     switch (object->type) {
         case OBJ_STRING: {
             ObjString* string = (ObjString*)object;
-            FREE_ARRAY(char, string->chars, string->length + 1);
-            FREE(ObjString, object);
+            // FREE_ARRAY(char, string->chars, string->length + 1);
+            FREE(ObjString, object); // when using flexible array member freeing struct object is enough
             break;
         }
     }
 }
 
 void freeObjects() {
+    // int count = 0;
     Obj* object = vm.objects;
     while (object != NULL) {
+        // printf("count: %d\n", count++);
         Obj* next = object->next;
         freeObject(object);
         object = next;

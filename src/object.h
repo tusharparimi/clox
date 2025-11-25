@@ -23,7 +23,8 @@ struct Obj {
 struct ObjString {
     Obj obj;
     int length;
-    char* chars;
+    // char* chars;
+    char chars[];
 };
 
 ObjString* takeString(char* chars, int length);

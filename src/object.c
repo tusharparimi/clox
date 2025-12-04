@@ -26,6 +26,7 @@ static ObjString* allocateString(char* chars, int length) {
     ObjString* string = (ObjString*)object;
 
     string->length = length;
+    string->isConstant = false;
     // string->chars = chars;
     memcpy(string->chars, chars, length);
     return string;
@@ -36,14 +37,25 @@ ObjString* takeString(char* chars, int length) {
 }
 
 ObjString* copyString(const char* chars, int length) {
-    char* heapChars = ALLOCATE(char, length + 1);
-    memcpy(heapChars, chars, length);
-    heapChars[length] = '\0';
-    return allocateString(heapChars, length);
+    // char* heapChars = ALLOCATE(char, length + 1);
+    // memcpy(heapChars, chars, length);
+    // heapChars[length] = '\0';
+    // return allocateString(heapChars, length);
+    Obj* object = (Obj*)reallocate(NULL, 0, sizeof(ObjString));
+    object->type = OBJ_STRING;
+    object->next = vm.objects;
+    vm.objects = object;
+    ObjString* string = (ObjString*)object;
+
+    string->length = length;
+    string->isConstant = true;
+    string->constChar = chars;
+
+    return string;
 }
 
 void printObject(Value value) {
     switch (OBJ_TYPE(value)) {
-        case OBJ_STRING:    printf("%s", AS_CSTRING(value)); break;
+        case OBJ_STRING:    printf("%.*s", AS_STRING(value)->length, AS_CSTRING(value)); break;
     }
 }

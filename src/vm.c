@@ -38,10 +38,12 @@ void initVM() {
     initBaseSizeValueArray(&vm.stack, STACK_BASE_CAPACITY);
     resetStack();
     vm.objects = NULL;
+    initTable(&vm.strings);
 }
 
 void freeVM() {
     freeValueArray(&vm.stack);
+    freeTable(&vm.strings);
     freeObjects();
 }
 

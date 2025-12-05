@@ -3,6 +3,7 @@
 
 #include "memory.h"
 #include "object.h"
+#include "table.h"
 #include "value.h"
 #include "vm.h"
 
@@ -17,7 +18,7 @@ static Obj* allocateObject(size_t size, ObjType type) {
     return object;
 }
 
-static ObjString* allocateString(char* chars, int length) {
+static ObjString* allocateString(char* chars, int length, uint32_t hash) {
     // ObjString* string = ALLOCATE_OBJ(ObjString, OBJ_STRING);
     Obj* object = (Obj*)reallocate(NULL, 0, sizeof(ObjString) + length * sizeof(char));
     object->type = OBJ_STRING;
@@ -27,13 +28,33 @@ static ObjString* allocateString(char* chars, int length) {
 
     string->length = length;
     string->isConstant = false;
+    string->hash = hash;
+    tableSet(&vm.strings, string, NIL_VAL);
     // string->chars = chars;
     memcpy(string->chars, chars, length);
     return string;
 }
 
+// FNV-1a hash function
+uint32_t hashString(const char* key, int length) {
+    uint32_t hash = 2166136261u;
+    for (int i = 0; i < length; i++) {
+        hash ^= (uint8_t)key[i];
+        hash *= 16777619;
+    }
+    return hash;
+}
+
 ObjString* takeString(char* chars, int length) {
-    return allocateString(chars, length);
+    uint32_t hash = hashString(chars, length);
+
+    ObjString* interned = tableFindString(&vm.strings, chars, length, hash);
+    if (interned != NULL) {
+        FREE_ARRAY(char, chars, length + 1);
+        return interned;
+    }
+
+    return allocateString(chars, length, hash);
 }
 
 ObjString* copyString(const char* chars, int length) {
@@ -41,6 +62,11 @@ ObjString* copyString(const char* chars, int length) {
     // memcpy(heapChars, chars, length);
     // heapChars[length] = '\0';
     // return allocateString(heapChars, length);
+    uint32_t hash = hashString(chars, length);
+
+    ObjString* interned = tableFindString(&vm.strings, chars, length, hash);
+    if (interned != NULL) return interned;
+
     Obj* object = (Obj*)reallocate(NULL, 0, sizeof(ObjString));
     object->type = OBJ_STRING;
     object->next = vm.objects;
@@ -49,6 +75,8 @@ ObjString* copyString(const char* chars, int length) {
 
     string->length = length;
     string->isConstant = true;
+    string->hash = hash;
+    tableSet(&vm.strings, string, NIL_VAL);
     string->constChar = chars;
 
     return string;

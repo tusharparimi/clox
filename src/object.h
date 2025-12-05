@@ -25,6 +25,7 @@ struct ObjString {
     int length;
     // char* chars;
     bool isConstant;
+    uint32_t hash;
     const char* constChar;
     char chars[];
 };

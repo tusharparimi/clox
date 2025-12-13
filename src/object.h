@@ -9,7 +9,7 @@
 #define IS_STRING(value)    isObjType(value, OBJ_STRING)
 
 #define AS_STRING(value)    ((ObjString*)AS_OBJ(value))
-#define AS_CSTRING(value)   ((((ObjString*)AS_OBJ(value))->isConstant) ? ((ObjString*)AS_OBJ(value))->constChar : ((ObjString*)AS_OBJ(value))->chars)
+#define AS_CSTRING(value)   (((ObjString*)AS_OBJ(value))->chars)
 
 typedef enum {
     OBJ_STRING,
@@ -23,11 +23,8 @@ struct Obj {
 struct ObjString {
     Obj obj;
     int length;
-    // char* chars;
-    bool isConstant;
+    char* chars;
     uint32_t hash;
-    const char* constChar;
-    char chars[];
 };
 
 ObjString* takeString(char* chars, int length);
